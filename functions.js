@@ -6,6 +6,12 @@ const fs = require('fs');
 var data = require('./rawJSON');
 
 
+/*
+  Function below takes the rawData from Firebase and process each student
+  Any student with end date after Oct 31, 2016 is returned and writtend to file
+  studentsParsed.json 
+*/
+
 parseJSON(data)
 .then(function(datesAfterNov) {
   console.log(datesAfterNov);
@@ -18,6 +24,9 @@ parseJSON(data)
 });
 
 
+
+
+//--------------------------------------------------Helpers
 function parseJSON(rawData) {
   return new Promise(function(resolve, reject) {
     // const students = JSON.parse(rawData);
