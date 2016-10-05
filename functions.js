@@ -7,16 +7,18 @@ var data = require('./rawJSON');
 
 
 /*
-  Function below takes the rawData from Firebase and process each student
-  Any student with end date after Oct 31, 2016 is returned and writtend to file
-  studentsParsed.json 
+  Function below takes the rawData from Firebase and processes each student
+  Any student with end date after the cutOffDate is returned and written to 
+  'studentsParsed.json' 
 */
 
-parseJSON(data)
-.then(function(datesAfterNov) {
-  console.log(datesAfterNov);
+const cutOffDate = '2016-10-31';
 
-  fs.writeFile('./studentsParsed.json', JSON.stringify(datesAfterNov), function(err) {
+parseJSON(data)
+.then(function(dataAfterCutOff) {
+  console.log(dataAfterCutOff);
+
+  fs.writeFile('./studentsParsed.json', JSON.stringify(dataAfterCutOff), function(err) {
    if(err) console.log(err);
    else console.log('>>>>>>>>>>Write complete')
   });
@@ -54,54 +56,22 @@ function processStudent(student, recordObj) {
     FirstName = "NA",
     LastName = "NA",
     GitHub__c = "NA",
-    Email = "NA",
-    startDate = "NA",
-    endDate = "NA",
-    progress = "NA",
-    accountId = "NA",
-    contactId = "NA";
+    endDate = "NA";
 
-  if (student.salesforce && student.salesforce.contactId) { //needs to have contactId to match record in sf
 
     if (student.info) {
       FirstName = student.info.first ? student.info.first : "NA";
       LastName = student.info.last ? student.info.last : "NA";
       GitHub__c = student.info.github ? student.info.github : "NA";
       Email = student.info.email ? student.info.email : "NA";
-
-      startDate = student.info.startDate ? moment(student.info.startDate, 'MM/DD/YYYY').format('YYYY-MM-DD') : "NA";
       endDate = student.info.endDate ? moment(student.info.endDate, 'MM/DD/YYYY').format('YYYY-MM-DD') : "NA";
-
-
     }
 
-    if (student.modules) {
-      var progressNum = student.progress;
-      var len = student.modules.length;
-      var lastModule = student.modules[progressNum];
-      progress = lastModule ? lastModule.name : "NA"; //captures the name of the last completed checkpoint   
-      // console.log(`Student: ${FirstName} ${LastName} Progress#: ${progressNum} lastModule: , ${progress}, endDate: ${endDate}`);
-    }
-
-    if (student.salesforce) {
-      accountId = student.salesforce.accountId ? student.salesforce.accountId : "NA";
-      contactId = student.salesforce.contactId ? student.salesforce.contactId : "NA";
-    }
-
-    if(moment(endDate).isAfter('2016-10-31', 'day')) {
-        recordObj[GitHub__c] = { // add new student object to parsedData, keys should match salesforce fields
-          FirstName: FirstName,
-          LastName: LastName,
+    if(moment(endDate).isAfter(cutOffDate, 'day')) {
+        recordObj[GitHub__c] = { 
+          Name: FirstName + " " + LastName,
           Email: Email,
-
-          Fulcrum_Start_Date__c: startDate,
-          Fulcrum_End_Date__c: endDate,
-          Fulcrum_Student_Progress__c: progress,
-          accountId: accountId,
-          Id: contactId
+          Fulcrum_End_Date__c: endDate
         }; 
-    } else {
-      return "No relevant";
     }
-  }
 }//processStudent
