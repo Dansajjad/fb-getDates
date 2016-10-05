@@ -15,10 +15,8 @@ parseJSON(data)
    else console.log('>>>>>>>>>>Write complete')
   });
 
-
 });
 
-// parseJSON(function(data) {
 
 function parseJSON(rawData) {
   return new Promise(function(resolve, reject) {
@@ -85,7 +83,6 @@ function processStudent(student, recordObj) {
         recordObj[GitHub__c] = { // add new student object to parsedData, keys should match salesforce fields
           FirstName: FirstName,
           LastName: LastName,
-          GitHub__c: GitHub__c,
           Email: Email,
 
           Fulcrum_Start_Date__c: startDate,
